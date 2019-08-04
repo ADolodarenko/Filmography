@@ -15,7 +15,7 @@ public class FilmDAOImpl implements FilmDAO {
     static {
         Film film1 = new Film();
         film1.setId(AUTO_ID.getAndIncrement());
-        film1.setName("Inception");
+        film1.setTitle("Inception");
         film1.setYear(2010);
         film1.setGenre("sci-fi");
         film1.setWatched(true);

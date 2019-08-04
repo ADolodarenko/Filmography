@@ -26,7 +26,7 @@
     <c:forEach var="film" items="${filmsList}">
         <tr>
             <td>${film.id}</td>
-            <td>${film.name}</td>
+            <td>${film.title}</td>
             <td>${film.year}</td>
             <td>${film.genre}</td>
             <td>${film.watched}</td>
