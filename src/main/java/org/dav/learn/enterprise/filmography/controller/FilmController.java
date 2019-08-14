@@ -5,10 +5,7 @@ import org.dav.learn.enterprise.filmography.service.FilmService;
 import org.dav.learn.enterprise.filmography.service.FilmServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -18,18 +15,28 @@ public class FilmController {
 
     private FilmService filmService;
 
+    private int page;
+
     @Autowired
     public void setFilmService(FilmService filmService) {
         this.filmService = filmService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView allFilms()
+    public ModelAndView allFilms(@RequestParam(defaultValue = "1") int page)
     {
-        List<Film> films = filmService.allFilms();
+        this.page = page;
+
+        List<Film> films = filmService.allFilms(page);
+        int filmsCount = filmService.filmsCount();
+        int pagesCount = (filmsCount + 9) / 10;
+
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("films");
+        modelAndView.addObject("page", page);
         modelAndView.addObject("filmsList", films);
+        modelAndView.addObject("filmsCount", filmsCount);
+        modelAndView.addObject("pagesCount", pagesCount);
         return modelAndView;
     }
 
@@ -47,7 +54,7 @@ public class FilmController {
     public ModelAndView deleteFilm(@PathVariable("id") int id)
     {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/");
+        modelAndView.setViewName("redirect:/?page=" + this.page);
         Film film = filmService.getById(id);
         filmService.delete(film);
         return modelAndView;
@@ -65,7 +72,7 @@ public class FilmController {
     public ModelAndView editFilm(@ModelAttribute("film") Film film)
     {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/");
+        modelAndView.setViewName("redirect:/?page=" + this.page);
         filmService.edit(film);
         return modelAndView;
     }
@@ -74,7 +81,7 @@ public class FilmController {
     public ModelAndView addFilm(@ModelAttribute("film") Film film)
     {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("redirect:/");
+        modelAndView.setViewName("redirect:/?page=" + this.page);
         filmService.add(film);
         return modelAndView;
     }
